@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<meta charset="utf-8"/>
+		<title>WW-P HS Calendar</title>
+		<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Circle-icons-calendar.svg/512px-Circle-icons-calendar.svg.png"/>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400"/>
+		<style>
+			html, body {
+				height: 100%;
+			}
+
+			body {
+				margin: 0;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			}
+
+			body, input {
+				font-family: Lato, sans-serif;
+				transition: 0.5s;
+			}
+
+			.A, .A input {
+				background-color: hsl(30, 100%, 80%);
+			}
+			
+			.B, .B input {
+				background-color: hsl(60, 100%, 80%);
+			}
+			
+			.C, .C input {
+				background-color: hsl(120, 100%, 80%);
+			}
+			
+			.D, .D input {
+				background-color: hsl(180, 100%, 80%);
+			}
+			
+			.Z, .Z input {
+				background-color: hsl(0, 100%, 80%);
+			}
+
+			input {
+				outline-style: none;
+				border-style: none none solid;
+				border-bottom-width: thin;
+			}
+
+			h1, h2 {
+				font-weight: 300;
+				line-height: 0;
+			}
+
+			h2 {
+				padding-bottom: 1em;
+			}
+
+			.bold {
+				font-weight: 400;
+			}
+		</style>
+	</head>
+	<body>
+		<h1><span id="output-date" class="bold"></span> <span id="output-verb"></span> <span id="output-article"></span> <span id="output-day" class="bold"></span> day</h1>
+		<h2>Drop periods <span id="output-period-0" class="bold"></span> and <span id="output-period-1" class="bold"></span></h2>
+		<input id="input-date" type="date" min="2019-09-01" max="2020-06-30" required/>
+		<script>
+			const calendar = new Map([
+				['2019-09-05', 'Z'],
+				['2019-09-06', 'A'],
+				['2019-09-09', 'B'],
+				['2019-09-10', 'C'],
+				['2019-09-11', 'D'],
+				['2019-09-12', 'A'],
+				['2019-09-13', 'B'],
+				['2019-09-16', 'C'],
+				['2019-09-17', 'D'],
+				['2019-09-18', 'A'],
+				['2019-09-19', 'B'],
+				['2019-09-20', 'C'],
+				['2019-09-23', 'D'],
+				['2019-09-24', 'A'],
+				['2019-09-25', 'B'],
+				['2019-09-26', 'C'],
+				['2019-09-27', 'D'],
+				['2019-10-01', 'A'],
+				['2019-10-02', 'B'],
+				['2019-10-03', 'C'],
+				['2019-10-04', 'D'],
+				['2019-10-07', 'A'],
+				['2019-10-08', 'B'],
+				['2019-10-10', 'C'],
+				['2019-10-11', 'D'],
+				['2019-10-14', 'A'],
+				['2019-10-15', 'B'],
+				['2019-10-16', 'C'],
+				['2019-10-17', 'D'],
+				['2019-10-18', 'A'],
+				['2019-10-21', 'B'],
+				['2019-10-22', 'C'],
+				['2019-10-23', 'D'],
+				['2019-10-24', 'A'],
+				['2019-10-25', 'B'],
+				['2019-10-28', 'C'],
+				['2019-10-29', 'D'],
+				['2019-10-30', 'A'],
+				['2019-10-31', 'B'],
+				['2019-11-01', 'C'],
+				['2019-11-04', 'D'],
+				['2019-11-05', 'A'],
+				['2019-11-06', 'B'],
+				['2019-11-11', 'C'],
+				['2019-11-12', 'D'],
+				['2019-11-13', 'A'],
+				['2019-11-14', 'B'],
+				['2019-11-15', 'C'],
+				['2019-11-18', 'D'],
+				['2019-11-19', 'A'],
+				['2019-11-20', 'B'],
+				['2019-11-21', 'C'],
+				['2019-11-22', 'D'],
+				['2019-11-25', 'A'],
+				['2019-11-26', 'B'],
+				['2019-11-27', 'C'],
+				['2019-12-02', 'D'],
+				['2019-12-03', 'A'],
+				['2019-12-04', 'B'],
+				['2019-12-05', 'C'],
+				['2019-12-06', 'D'],
+				['2019-12-09', 'A'],
+				['2019-12-10', 'B'],
+				['2019-12-11', 'C'],
+				['2019-12-12', 'D'],
+				['2019-12-13', 'A'],
+				['2019-12-16', 'B'],
+				['2019-12-17', 'C'],
+				['2019-12-18', 'D'],
+				['2019-12-19', 'A'],
+				['2019-12-20', 'B'],
+				['2020-01-02', 'C'],
+				['2020-01-03', 'D'],
+				['2020-01-06', 'A'],
+				['2020-01-07', 'B'],
+				['2020-01-08', 'C'],
+				['2020-01-09', 'D'],
+				['2020-01-10', 'A'],
+				['2020-01-13', 'B'],
+				['2020-01-14', 'C'],
+				['2020-01-15', 'D'],
+				['2020-01-16', 'A'],
+				['2020-01-17', 'B'],
+				['2020-01-21', 'C'],
+				['2020-01-22', 'D'],
+				['2020-01-23', 'A'],
+				['2020-01-24', 'B'],
+				['2020-01-27', 'C'],
+				['2020-01-28', 'D'],
+				['2020-01-29', 'A'],
+				['2020-01-30', 'B'],
+				['2020-01-31', 'C'],
+				['2020-02-03', 'D'],
+				['2020-02-04', 'A'],
+				['2020-02-05', 'B'],
+				['2020-02-06', 'C'],
+				['2020-02-07', 'D'],
+				['2020-02-10', 'A'],
+				['2020-02-11', 'B'],
+				['2020-02-12', 'C'],
+				['2020-02-13', 'D'],
+				['2020-02-18', 'A'],
+				['2020-02-19', 'B'],
+				['2020-02-20', 'C'],
+				['2020-02-21', 'D'],
+				['2020-02-24', 'A'],
+				['2020-02-25', 'B'],
+				['2020-02-26', 'C'],
+				['2020-02-27', 'D'],
+				['2020-02-28', 'A'],
+				['2020-03-02', 'B'],
+				['2020-03-03', 'C'],
+				['2020-03-04', 'D'],
+				['2020-03-05', 'A'],
+				['2020-03-06', 'B'],
+				['2020-03-09', 'C'],
+				['2020-03-10', 'D'],
+				['2020-03-11', 'A'],
+				['2020-03-12', 'B'],
+				['2020-03-13', 'C'],
+				['2020-03-16', 'D'],
+				['2020-03-17', 'A'],
+				['2020-03-18', 'B'],
+				['2020-03-19', 'C'],
+				['2020-03-20', 'D'],
+				['2020-03-23', 'A'],
+				['2020-03-24', 'B'],
+				['2020-03-25', 'C'],
+				['2020-03-26', 'D'],
+				['2020-03-27', 'A'],
+				['2020-03-30', 'B'],
+				['2020-03-31', 'C'],
+				['2020-04-01', 'D'],
+				['2020-04-02', 'A'],
+				['2020-04-03', 'B'],
+				['2020-04-06', 'C'],
+				['2020-04-07', 'D'],
+				['2020-04-08', 'A'],
+				['2020-04-09', 'B'],
+				['2020-04-20', 'C'],
+				['2020-04-21', 'D'],
+				['2020-04-22', 'A'],
+				['2020-04-23', 'B'],
+				['2020-04-24', 'C'],
+				['2020-04-27', 'D'],
+				['2020-04-28', 'A'],
+				['2020-04-29', 'B'],
+				['2020-04-30', 'C'],
+				['2020-05-01', 'D'],
+				['2020-05-04', 'A'],
+				['2020-05-05', 'B'],
+				['2020-05-06', 'C'],
+				['2020-05-07', 'D'],
+				['2020-05-08', 'A'],
+				['2020-05-11', 'B'],
+				['2020-05-12', 'C'],
+				['2020-05-13', 'D'],
+				['2020-05-14', 'A'],
+				['2020-05-15', 'B'],
+				['2020-05-18', 'C'],
+				['2020-05-19', 'D'],
+				['2020-05-20', 'A'],
+				['2020-05-21', 'B'],
+				['2020-05-22', 'C'],
+				['2020-05-26', 'D'],
+				['2020-05-27', 'A'],
+				['2020-05-28', 'B'],
+				['2020-05-29', 'C'],
+				['2020-06-01', 'D'],
+				['2020-06-02', 'A'],
+				['2020-06-03', 'B'],
+				['2020-06-04', 'C'],
+				['2020-06-05', 'D'],
+				['2020-06-08', 'A'],
+				['2020-06-09', 'B'],
+				['2020-06-10', 'C'],
+				['2020-06-11', 'D'],
+				['2020-06-12', 'A'],
+				['2020-06-15', 'B'],
+				['2020-06-16', 'C'],
+				['2020-06-17', 'D'],
+				['2020-06-18', 'Z'],
+				['2020-06-19', 'Z'],
+			]);
+
+			const input = {
+				date: document.getElementById('input-date')
+			}, output = {
+				date: document.getElementById('output-date'),
+				verb: document.getElementById('output-verb'),
+				article: document.getElementById('output-article'),
+				day: document.getElementById('output-day'),
+				period: [document.getElementById('output-period-0'), document.getElementById('output-period-1')]
+			};
+
+			input.date.addEventListener('input', function() {
+				if (this.validity.valid) {
+					output.date.textContent = this.valueAsDate.toLocaleDateString(undefined, {timeZone: 'UTC'});
+					output.verb.textContent = this.valueAsNumber <= Date.now() - new Date().getTimezoneOffset() * 60000 - 86400000 ? 'was' : 'is';
+
+					const day = calendar.get(this.value);
+					output.article.textContent = day === 'A' ? 'an' : 'a';
+					output.day.textContent = day || 'No School';
+
+					const period = 'CBAD'.indexOf(day) + 1;
+					output.period[0].textContent = period || '_';
+					output.period[1].textContent = period ? period + 4 : '_';
+
+					document.body.className = day || '';
+				}
+			});
+
+			input.date.valueAsNumber = Date.now() - new Date().getTimezoneOffset() * 60000;
+			input.date.dispatchEvent(new Event('input'));
+		</script>
+	</body>
+</html>
